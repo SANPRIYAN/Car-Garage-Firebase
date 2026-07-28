@@ -1,47 +1,43 @@
 import { useState } from 'react';
-import { useCreateCar, useCarImageUpload } from '../../hooks/useCars';
+import { useCreateCar } from '../../hooks/useCars';
 
 export function AddCarForm({ user }) {
   const [make, setMake] = useState('');
   const [model, setModel] = useState('');
-  const [file, setFile] = useState(null);
+  const [imageUrl, setImageUrl] = useState('');
   const [status, setStatus] = useState('idle'); // idle | saving | error
   const [errorMsg, setErrorMsg] = useState('');
 
   const createCar = useCreateCar();
-  const uploadImage = useCarImageUpload();
 
   async function handleSubmit(e) {
     e.preventDefault();
     setStatus('saving');
     setErrorMsg('');
 
-    const garageId = user.uid; // Keep for backward compatibility with upload logic
+    const garageId = user.uid;
     const ownerId = user.uid;
     const ownerName = user.displayName || user.email;
 
-    const createResult = await createCar.mutateAsync({ garageId, ownerId, ownerName, make, model });
+    const createResult = await createCar.mutateAsync({ 
+      garageId, 
+      ownerId, 
+      ownerName, 
+      make, 
+      model,
+      imageUrl: imageUrl.trim()
+    });
+
     if (!createResult.success) {
       setStatus('error');
       setErrorMsg(createResult.error);
       return;
     }
 
-    const carId = createResult.data;
-
-    if (file) {
-      const uploadResult = await uploadImage.mutateAsync({ carId, garageId, file });
-      if (!uploadResult.success) {
-        setStatus('error');
-        setErrorMsg(`Car saved, but image upload failed: ${uploadResult.error}`);
-        return;
-      }
-    }
-
     setStatus('idle');
     setMake('');
     setModel('');
-    setFile(null);
+    setImageUrl('');
   }
 
   return (
@@ -82,14 +78,14 @@ export function AddCarForm({ user }) {
 
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
-          Photo <span className="text-red-400 normal-case font-normal">*</span>
+          Image URL
         </label>
         <input
-          type="file"
-          accept="image/*"
-          required
-          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-          className="text-sm text-slate-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-slate-700 file:text-white hover:file:bg-slate-600 file:transition-colors file:cursor-pointer w-full bg-slate-900/50 rounded-xl border border-slate-700"
+          type="url"
+          className="rounded-xl px-4 py-3 bg-slate-900/50 border border-slate-700 text-white outline-none transition-all focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 placeholder-slate-500"
+          placeholder="https://images.unsplash.com/photo-..."
+          value={imageUrl}
+          onChange={(e) => setImageUrl(e.target.value)}
         />
       </div>
 
@@ -112,3 +108,4 @@ export function AddCarForm({ user }) {
     </form>
   );
 }
+
