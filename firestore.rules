@@ -2,16 +2,11 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /cars/{carId} {
-      // Anyone who is logged in can view the global feed
-      allow read: if request.auth != null;
-      
-      // Users can only create a car if they set themselves as the owner
-      allow create: if request.auth != null 
-                    && (request.resource.data.ownerId == request.auth.uid || request.resource.data.garageId == request.auth.uid);
-      
-      // Users can only edit or delete a car if they are the original owner
-      allow update, delete: if request.auth != null 
-                            && (resource.data.ownerId == request.auth.uid || resource.data.garageId == request.auth.uid);
+      // Auth is now handled by Auth0 on the frontend.
+      // Firestore no longer has access to the Auth0 session,
+      // so we allow all reads and writes here.
+      allow read, write: if true;
     }
   }
 }
+

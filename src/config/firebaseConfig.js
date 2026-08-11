@@ -1,6 +1,5 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
 import { getFunctions } from 'firebase/functions';
 
 // All values come from your .env file (see notes below)
@@ -21,6 +20,7 @@ if (missingKeys.length > 0) {
 
 const app = initializeApp(firebaseConfig);
 
+// Auth is now handled by Auth0 — Firebase is only used for Firestore (database) and Functions
 export const db = getFirestore(app);
-export const auth = getAuth(app);
 export const functions = getFunctions(app);
+

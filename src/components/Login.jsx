@@ -1,25 +1,12 @@
-import { useState } from 'react';
-import { signInWithGoogle } from '../services/auth';
+import { useAuth0 } from '@auth0/auth0-react';
 
 export function Login() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleGoogleSignIn = async () => {
-    setLoading(true);
-    setError('');
-    const result = await signInWithGoogle();
-    if (!result.success) {
-      setError(result.error);
-      setLoading(false);
-    }
-    // If successful, onAuthStateChanged in App.jsx will automatically handle the UI transition
-  };
+  const { loginWithRedirect, isLoading } = useAuth0();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white p-4">
       <div className="max-w-md w-full bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl flex flex-col items-center relative overflow-hidden">
-        
+
         {/* Subtle decorative glow */}
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
         <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
@@ -30,7 +17,7 @@ export function Login() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
-          
+
           <h2 className="text-3xl font-extrabold tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
             Car Garage
           </h2>
@@ -39,11 +26,11 @@ export function Login() {
           </p>
 
           <button
-            onClick={handleGoogleSignIn}
-            disabled={loading}
+            onClick={() => loginWithRedirect()}
+            disabled={isLoading}
             className="w-full flex items-center justify-center gap-3 bg-white text-gray-900 px-6 py-3.5 rounded-xl font-bold shadow-lg hover:bg-gray-50 transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-70 disabled:hover:scale-100"
           >
-            {loading ? (
+            {isLoading ? (
               <span className="animate-pulse">Connecting...</span>
             ) : (
               <>
@@ -57,12 +44,6 @@ export function Login() {
               </>
             )}
           </button>
-
-          {error && (
-            <div className="mt-4 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm text-center w-full">
-              {error}
-            </div>
-          )}
         </div>
       </div>
     </div>
