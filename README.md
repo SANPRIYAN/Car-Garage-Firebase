@@ -10,7 +10,7 @@ A simple **Car Garage Management App** built with **React** and integrated with 
 
 ### Live Website
 
-https://car-garage-599e2.firebase.app
+[https://car-garage-599e2.firebase.app](https://car-garage-599e2.web.app/)
 
 ### Note
 
